@@ -1,15 +1,15 @@
 # Implementation Plan
 
 - [ ] 1. 開発基盤セットアップ（Flutter/Riverpod/Drift/通知プラグイン）
-- [ ] 1.1 プロジェクト依存導入と初期設定 (P)
+- [x] 1.1 プロジェクト依存導入と初期設定 (P)
   - Riverpod/StateNotifier、Drift、flutter_local_notifications、workmanager、speechプラグインを追加し、Androidで必要な権限・マニフェスト設定を行う
   - _Requirements: 3.1,3.2,3.3,3.4,7.1_
-- [ ] 1.2 Drift 基本設定とビルド環境 (P)
+- [x] 1.2 Drift 基本設定とビルド環境 (P)
   - Driftのビルドランナー/コード生成設定を整備し、SQLiteドライバとバージョニング方針を有効化
   - _Requirements: 7.1,7.2_
 
 - [ ] 2. データレイヤ実装（Driftテーブル＋Repository）
-- [ ] 2.1 notes/presets/reminders スキーマ定義とDAO作成
+- [x] 2.1 notes/presets/reminders スキーマ定義とDAO作成
   - Note/Preset/Reminder テーブルと外部キー・インデックス（scheduledAt）を定義し、基本CRUDを実装
   - _Requirements: 1.2,2.3,3.1,3.2,5.1,5.2,5.3,5.4,6.4,7.1_
 - [ ] 2.2 Repository 実装 (P)

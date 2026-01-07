@@ -22,7 +22,10 @@ class Reminders extends Table {
 
   @override
   List<Index> get indexes => [
-    Index('idx_reminders_scheduled_at', [scheduledAt]),
+    Index(
+      'idx_reminders_scheduled_at',
+      'CREATE INDEX idx_reminders_scheduled_at ON reminders (scheduled_at)',
+    ),
   ];
 }
 
@@ -44,6 +47,13 @@ class FlickMemoDatabase extends _$FlickMemoDatabase {
 
   @override
   int get schemaVersion => 1;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    beforeOpen: (details) async {
+      await customStatement('PRAGMA foreign_keys = ON');
+    },
+  );
 }
 
 @DriftAccessor(tables: [Notes])
