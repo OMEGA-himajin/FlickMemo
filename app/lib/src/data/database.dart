@@ -19,14 +19,6 @@ class Reminders extends Table {
   TextColumn get triggerValue => text().nullable()();
   DateTimeColumn get scheduledAt => dateTime()();
   TextColumn get status => text()();
-
-  @override
-  List<Index> get indexes => [
-    Index(
-      'idx_reminders_scheduled_at',
-      'CREATE INDEX idx_reminders_scheduled_at ON reminders (scheduled_at)',
-    ),
-  ];
 }
 
 class Presets extends Table {

@@ -58,6 +58,8 @@ class EntryDispatcher {
   EntryDispatcher({PresetService? presetService})
     : _presetService = presetService;
 
+  // reserved for future preset validation
+  // ignore: unused_field
   final PresetService? _presetService;
 
   QuickAddRequest dispatch(EntryInput input) {

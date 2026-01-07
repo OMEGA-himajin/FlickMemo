@@ -1,8 +1,8 @@
 import 'package:app/src/application/entry_dispatcher.dart';
 import 'package:app/src/data/database.dart';
 import 'package:app/src/domain/note_service.dart';
-import 'package:app/src/domain/preset_service.dart';
-import 'package:app/src/domain/reminder_scheduler.dart';
+import 'package:app/src/domain/preset_service.dart' as preset;
+import 'package:app/src/domain/reminder_scheduler.dart' as reminder;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class QuickAddState {
@@ -21,7 +21,7 @@ class QuickAddState {
   final String? body;
   final String? color;
   final String inputMode;
-  final ReminderTrigger? trigger;
+  final reminder.ReminderTrigger? trigger;
   final EntryType entryType;
   final int? openNoteId;
   final bool hasChanges;
@@ -31,7 +31,7 @@ class QuickAddState {
     String? body,
     String? color,
     String? inputMode,
-    ReminderTrigger? trigger,
+    reminder.ReminderTrigger? trigger,
     bool overrideTrigger = false,
     EntryType? entryType,
     int? openNoteId,
@@ -60,13 +60,16 @@ class QuickAddController extends StateNotifier<QuickAddState> {
   QuickAddController(
     this._noteService,
     this._scheduler, {
-    PresetService? presetService,
+    preset.PresetService? presetService,
   }) : _presetService = presetService,
        super(const QuickAddState());
 
   final NoteService _noteService;
-  final ReminderScheduler _scheduler;
-  final PresetService? _presetService;
+  final reminder.ReminderScheduler _scheduler;
+  final preset.PresetService? _presetService;
+
+  QuickAddState get snapshot => state;
+  bool get hasUnsavedChanges => state.hasChanges;
 
   void updateTitle(String title) {
     state = state.copyWith(title: title, hasChanges: true);
@@ -84,7 +87,7 @@ class QuickAddController extends StateNotifier<QuickAddState> {
     state = state.copyWith(inputMode: inputMode, hasChanges: true);
   }
 
-  void setTrigger(ReminderTrigger? trigger) {
+  void setTrigger(reminder.ReminderTrigger? trigger) {
     state = state.copyWith(
       trigger: trigger,
       hasChanges: true,
@@ -104,9 +107,9 @@ class QuickAddController extends StateNotifier<QuickAddState> {
     if (request.presetId != null && _presetService != null) {
       final presetId = int.tryParse(request.presetId!);
       if (presetId != null) {
-        final preset = await _presetService!.get(presetId);
-        if (preset != null) {
-          applyPreset(preset);
+        final presetItem = await _presetService.get(presetId);
+        if (presetItem != null) {
+          applyPreset(presetItem);
         }
       }
     }
@@ -137,8 +140,9 @@ class QuickAddController extends StateNotifier<QuickAddState> {
     );
 
     DateTime? scheduledAt;
-    if (state.trigger != null) {
-      final result = await _scheduler.schedule(noteId, state.trigger!);
+    final reminderTrigger = state.trigger;
+    if (reminderTrigger != null) {
+      final result = await _scheduler.schedule(noteId, reminderTrigger);
       scheduledAt = result.scheduledAt;
     }
 
@@ -146,31 +150,33 @@ class QuickAddController extends StateNotifier<QuickAddState> {
     return SaveResult(noteId: noteId, scheduledAt: scheduledAt);
   }
 
-  ReminderTrigger _mapDefaultTrigger(DefaultTrigger trigger) {
+  reminder.ReminderTrigger _mapDefaultTrigger(DefaultTrigger trigger) {
     switch (trigger.type) {
       case TriggerType.absolute:
-        return AbsoluteTrigger(
+        return reminder.AbsoluteTrigger(
           DateTime.fromMillisecondsSinceEpoch(int.parse(trigger.value)),
         );
       case TriggerType.relative:
-        return RelativeTrigger(int.parse(trigger.value));
+        return reminder.RelativeTrigger(int.parse(trigger.value));
       case TriggerType.bucket:
-        return BucketTrigger(trigger.value);
+        return reminder.BucketTrigger(trigger.value);
     }
   }
 
-  ReminderTrigger? _mapPresetTrigger(Preset preset) {
+  reminder.ReminderTrigger? _mapPresetTrigger(Preset preset) {
     switch (preset.triggerType) {
       case 'absolute':
         final millis = int.tryParse(preset.triggerValue);
         if (millis == null) return null;
-        return AbsoluteTrigger(DateTime.fromMillisecondsSinceEpoch(millis));
+        return reminder.AbsoluteTrigger(
+          DateTime.fromMillisecondsSinceEpoch(millis),
+        );
       case 'relative':
         final minutes = int.tryParse(preset.triggerValue);
         if (minutes == null) return null;
-        return RelativeTrigger(minutes);
+        return reminder.RelativeTrigger(minutes);
       case 'bucket':
-        return BucketTrigger(preset.triggerValue);
+        return reminder.BucketTrigger(preset.triggerValue);
       default:
         return null;
     }

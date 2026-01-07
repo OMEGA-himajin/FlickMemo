@@ -1,5 +1,4 @@
 import 'package:app/src/data/database.dart';
-import 'package:drift/drift.dart';
 
 class NoteRepository {
   NoteRepository(this._db);

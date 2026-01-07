@@ -16,7 +16,7 @@ class QuickAddUI {
     _modeController.updateTitle(title);
   }
 
-  bool shouldWarnOnExit() => _dirty && _controller.state.hasChanges;
+  bool shouldWarnOnExit() => _dirty && _controller.hasUnsavedChanges;
 
   Future<SaveResult> save() async {
     final trigger = _schedulerUI.currentTrigger;

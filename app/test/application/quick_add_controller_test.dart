@@ -2,8 +2,8 @@ import 'package:app/src/application/quick_add_controller.dart';
 import 'package:app/src/data/database.dart';
 import 'package:app/src/data/repositories.dart';
 import 'package:app/src/domain/note_service.dart';
-import 'package:app/src/domain/preset_service.dart';
-import 'package:app/src/domain/reminder_scheduler.dart';
+import 'package:app/src/domain/preset_service.dart' as preset;
+import 'package:app/src/domain/reminder_scheduler.dart' as reminder;
 import 'package:app/src/platform/local_notification_adapter.dart';
 import 'package:app/src/platform/workmanager_adapter.dart';
 import 'package:drift/native.dart';
@@ -15,10 +15,10 @@ void main() {
   late PresetRepository presetRepository;
   late ReminderRepository reminderRepository;
   late NoteService noteService;
-  late PresetService presetService;
+  late preset.PresetService presetService;
   late _LocalAdapterSpy localSpy;
   late _WorkManagerSpy workSpy;
-  late ReminderScheduler scheduler;
+  late reminder.ReminderScheduler scheduler;
   late QuickAddController controller;
 
   setUp(() {
@@ -27,10 +27,10 @@ void main() {
     presetRepository = PresetRepository(db);
     reminderRepository = ReminderRepository(db);
     noteService = NoteService(noteRepository, nowProvider: () => _fixedNow);
-    presetService = PresetService(presetRepository);
+    presetService = preset.PresetService(presetRepository);
     localSpy = _LocalAdapterSpy();
     workSpy = _WorkManagerSpy();
-    scheduler = ReminderScheduler(
+    scheduler = reminder.ReminderScheduler(
       reminderRepository,
       nowProvider: () => _fixedNow,
       localNotificationAdapter: localSpy,
@@ -51,7 +51,7 @@ void main() {
     controller.updateTitle('memo');
     controller.setBody('text');
     controller.setColor('red');
-    controller.setTrigger(const RelativeTrigger(15));
+    controller.setTrigger(const reminder.RelativeTrigger(15));
 
     final result = await controller.save();
 
@@ -80,21 +80,24 @@ void main() {
 
   test('applies preset to state', () async {
     final presetId = await presetService.save(
-      const PresetInput(
+      const preset.PresetInput(
         name: 'night quick',
-        trigger: BucketTrigger('night'),
+        trigger: preset.BucketTrigger('night'),
         inputMode: 'voice',
         color: 'green',
       ),
     );
-    final preset = (await presetRepository.findById(presetId))!;
+    final presetItem = (await presetRepository.findById(presetId))!;
 
-    controller.applyPreset(preset);
+    controller.applyPreset(presetItem);
 
-    expect(controller.state.inputMode, 'voice');
-    expect(controller.state.color, 'green');
-    expect(controller.state.trigger, isA<BucketTrigger>());
-    expect((controller.state.trigger as BucketTrigger).bucket, 'night');
+    expect(controller.snapshot.inputMode, 'voice');
+    expect(controller.snapshot.color, 'green');
+    expect(controller.snapshot.trigger, isA<reminder.BucketTrigger>());
+    expect(
+      (controller.snapshot.trigger as reminder.BucketTrigger).bucket,
+      'night',
+    );
   });
 }
 
