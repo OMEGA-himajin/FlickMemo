@@ -15,8 +15,9 @@ class NoteService {
     this._noteRepository, {
     DateTime Function()? nowProvider,
     Set<String>? allowedColors,
-  })  : _now = nowProvider ?? DateTime.now,
-        _allowedColors = allowedColors ?? const {'red', 'blue', 'yellow', 'green'};
+  }) : _now = nowProvider ?? DateTime.now,
+       _allowedColors =
+           allowedColors ?? const {'red', 'blue', 'yellow', 'green'};
 
   final NoteRepository _noteRepository;
   final DateTime Function() _now;

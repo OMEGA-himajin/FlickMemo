@@ -43,9 +43,8 @@ void main() {
 
   test('throws when color is not in allowed palette', () async {
     expect(
-      () => noteService.create(
-        const NoteInput(title: 'memo', color: 'unknown'),
-      ),
+      () =>
+          noteService.create(const NoteInput(title: 'memo', color: 'unknown')),
       throwsA(isA<ArgumentError>()),
     );
   });
