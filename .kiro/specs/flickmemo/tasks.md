@@ -12,7 +12,7 @@
 - [x] 2.1 notes/presets/reminders スキーマ定義とDAO作成
   - Note/Preset/Reminder テーブルと外部キー・インデックス（scheduledAt）を定義し、基本CRUDを実装
   - _Requirements: 1.2,2.3,3.1,3.2,5.1,5.2,5.3,5.4,6.4,7.1_
-- [ ] 2.2 Repository 実装 (P)
+- [x] 2.2 Repository 実装 (P)
   - NoteRepository/PresetRepository/ReminderRepository をDrift DAOに接続し、非同期で永続化・取得を提供
   - _Requirements: 1.2,2.3,3.1,3.2,5.1,5.2,5.3,5.4,6.4,7.1_
 
