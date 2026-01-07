@@ -23,7 +23,7 @@
 - [x] 3.2 PresetService 実装 (P)
   - プリセット保存/更新/取得とバリデーション（時間帯/オフセット/入力方式/カラー）を実装
   - _Requirements: 5.1,5.2,5.3,5.4,6.2_
-- [ ] 3.3 ReminderScheduler 実装
+- [x] 3.3 ReminderScheduler 実装
   - ReminderTriggerの時間計算（absolute/relative/bucket）、Bucket→08/12/17/21繰越規則、exact許可有無での通知スケジュール、MVPのSnooze/手動再設定、P1のWorkManager再提示を組み込む
   - _Requirements: 3.1,3.2,3.3,3.4,4.4,6.4,7.4_
 - [ ] 3.4 LocalNotificationAdapter / WorkManagerAdapter
