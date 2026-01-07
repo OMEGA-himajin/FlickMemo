@@ -17,7 +17,7 @@
   - _Requirements: 1.2,2.3,3.1,3.2,5.1,5.2,5.3,5.4,6.4,7.1_
 
 - [ ] 3. ドメインサービス実装
-- [ ] 3.1 NoteService 実装 (P)
+- [x] 3.1 NoteService 実装 (P)
   - タイトル必須・カラー制約を含むメモ作成/更新ロジックをRepository経由で実装
   - _Requirements: 1.2,2.3,6.4,7.1_
 - [ ] 3.2 PresetService 実装 (P)
