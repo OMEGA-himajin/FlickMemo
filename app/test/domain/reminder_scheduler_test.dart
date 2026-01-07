@@ -1,6 +1,8 @@
 import 'package:app/src/data/database.dart';
 import 'package:app/src/data/repositories.dart';
 import 'package:app/src/domain/reminder_scheduler.dart';
+import 'package:app/src/platform/local_notification_adapter.dart';
+import 'package:app/src/platform/workmanager_adapter.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -9,14 +11,20 @@ void main() {
   late NoteRepository noteRepository;
   late ReminderRepository reminderRepository;
   late ReminderScheduler scheduler;
+  late _LocalAdapterSpy localSpy;
+  late _WorkManagerSpy workSpy;
 
   setUp(() {
     db = FlickMemoDatabase(NativeDatabase.memory());
     noteRepository = NoteRepository(db);
     reminderRepository = ReminderRepository(db);
+    localSpy = _LocalAdapterSpy();
+    workSpy = _WorkManagerSpy();
     scheduler = ReminderScheduler(
       reminderRepository,
       nowProvider: () => _fixedNow,
+      localNotificationAdapter: localSpy,
+      workManagerAdapter: workSpy,
     );
   });
 
@@ -39,6 +47,8 @@ void main() {
       target.millisecondsSinceEpoch.toString(),
     );
     expect(reminders.first.scheduledAt, target);
+    expect(localSpy.lastReminder?.id, reminders.first.id);
+    expect(workSpy.lastReminder?.id, reminders.first.id);
   });
 
   test('schedules relative trigger minutes from now', () async {
@@ -80,4 +90,22 @@ Future<int> _createNote(NoteRepository repo) async {
   return repo.create(
     NotesCompanion.insert(title: 'note', createdAt: now, updatedAt: now),
   );
+}
+
+class _LocalAdapterSpy extends LocalNotificationAdapter {
+  Reminder? lastReminder;
+
+  @override
+  Future<void> schedule(Reminder reminder) async {
+    lastReminder = reminder;
+  }
+}
+
+class _WorkManagerSpy extends WorkManagerAdapter {
+  Reminder? lastReminder;
+
+  @override
+  Future<void> enqueueRetry(Reminder reminder) async {
+    lastReminder = reminder;
+  }
 }

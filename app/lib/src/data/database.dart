@@ -81,6 +81,9 @@ class ReminderDao extends DatabaseAccessor<FlickMemoDatabase>
 
   Future<List<Reminder>> remindersForNote(int noteId) =>
       (select(reminders)..where((tbl) => tbl.noteId.equals(noteId))).get();
+
+  Future<Reminder?> findById(int id) =>
+      (select(reminders)..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
 }
 
 @DriftAccessor(tables: [Presets])

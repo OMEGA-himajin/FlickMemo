@@ -25,6 +25,8 @@ class ReminderRepository {
 
   Future<List<Reminder>> forNote(int noteId) =>
       _db.reminderDao.remindersForNote(noteId);
+
+  Future<Reminder?> findById(int id) => _db.reminderDao.findById(id);
 }
 
 class PresetRepository {

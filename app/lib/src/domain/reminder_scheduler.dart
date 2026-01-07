@@ -1,5 +1,7 @@
 import 'package:app/src/data/database.dart';
 import 'package:app/src/data/repositories.dart';
+import 'package:app/src/platform/local_notification_adapter.dart';
+import 'package:app/src/platform/workmanager_adapter.dart';
 import 'package:drift/drift.dart';
 
 class ReminderTrigger {
@@ -31,18 +33,26 @@ class ReminderScheduler {
     this._reminderRepository, {
     DateTime Function()? nowProvider,
     Map<String, _BucketSlot>? bucketSlots,
+    LocalNotificationAdapter? localNotificationAdapter,
+    WorkManagerAdapter? workManagerAdapter,
   }) : _now = nowProvider ?? DateTime.now,
-       _bucketSlots = bucketSlots ?? _defaultBuckets;
+       _bucketSlots = bucketSlots ?? _defaultBuckets,
+       _localNotificationAdapter =
+           localNotificationAdapter ?? const NoopLocalNotificationAdapter(),
+       _workManagerAdapter =
+           workManagerAdapter ?? const NoopWorkManagerAdapter();
 
   final ReminderRepository _reminderRepository;
   final DateTime Function() _now;
   final Map<String, _BucketSlot> _bucketSlots;
+  final LocalNotificationAdapter _localNotificationAdapter;
+  final WorkManagerAdapter _workManagerAdapter;
 
   Future<ScheduleResult> schedule(int noteId, ReminderTrigger trigger) async {
     final now = _now();
     final _Computed computed = _compute(trigger, now);
 
-    await _reminderRepository.create(
+    final reminderId = await _reminderRepository.create(
       RemindersCompanion.insert(
         noteId: noteId,
         triggerType: computed.type,
@@ -51,6 +61,12 @@ class ReminderScheduler {
         status: 'scheduled',
       ),
     );
+
+    final reminder = await _reminderRepository.findById(reminderId);
+    if (reminder != null) {
+      await _localNotificationAdapter.schedule(reminder);
+      await _workManagerAdapter.enqueueRetry(reminder);
+    }
 
     return ScheduleResult(computed.scheduledAt);
   }
