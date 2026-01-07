@@ -20,7 +20,7 @@
 - [x] 3.1 NoteService 実装 (P)
   - タイトル必須・カラー制約を含むメモ作成/更新ロジックをRepository経由で実装
   - _Requirements: 1.2,2.3,6.4,7.1_
-- [ ] 3.2 PresetService 実装 (P)
+- [x] 3.2 PresetService 実装 (P)
   - プリセット保存/更新/取得とバリデーション（時間帯/オフセット/入力方式/カラー）を実装
   - _Requirements: 5.1,5.2,5.3,5.4,6.2_
 - [ ] 3.3 ReminderScheduler 実装

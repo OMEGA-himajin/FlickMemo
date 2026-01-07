@@ -95,4 +95,10 @@ class PresetDao extends DatabaseAccessor<FlickMemoDatabase>
   )..where((tbl) => tbl.name.equals(name))).getSingleOrNull();
 
   Future<List<Preset>> allPresets() => select(presets).get();
+
+  Future<Preset?> findById(int id) =>
+      (select(presets)..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
+
+  Future<int> updatePreset(int id, PresetsCompanion data) =>
+      (update(presets)..where((tbl) => tbl.id.equals(id))).write(data);
 }

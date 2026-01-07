@@ -38,4 +38,9 @@ class PresetRepository {
   Future<Preset?> findByName(String name) => _db.presetDao.findByName(name);
 
   Future<List<Preset>> all() => _db.presetDao.allPresets();
+
+  Future<Preset?> findById(int id) => _db.presetDao.findById(id);
+
+  Future<int> update(int id, PresetsCompanion preset) =>
+      _db.presetDao.updatePreset(id, preset);
 }
