@@ -26,7 +26,7 @@
 - [x] 3.3 ReminderScheduler 実装
   - ReminderTriggerの時間計算（absolute/relative/bucket）、Bucket→08/12/17/21繰越規則、exact許可有無での通知スケジュール、MVPのSnooze/手動再設定、P1のWorkManager再提示を組み込む
   - _Requirements: 3.1,3.2,3.3,3.4,4.4,6.4,7.4_
-- [ ] 3.4 LocalNotificationAdapter / WorkManagerAdapter
+- [x] 3.4 LocalNotificationAdapter / WorkManagerAdapter
   - flutter_local_notificationsで通知チャンネル・表示を実装し、workmanagerで再提示ジョブを登録（P1）しつつMVPは手動/Snooze起点を許容
   - _Requirements: 3.1,3.2,3.3,3.4_
 
