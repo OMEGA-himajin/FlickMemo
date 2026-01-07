@@ -62,6 +62,8 @@ class PresetService {
     return _presetRepository.create(companion);
   }
 
+  Future<Preset?> get(int id) => _presetRepository.findById(id);
+
   Future<void> update(int id, PresetInput input) async {
     final companion = _toCompanion(input, allowNameOverride: true);
     await _presetRepository.update(id, companion);

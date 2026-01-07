@@ -41,30 +41,30 @@
   - ウィジェット/ショートカットからEntryDispatcherを呼び出し、プリセット適用とロック状態考慮でQuickAddを起動
   - _Requirements: 6.1,6.2,6.4_
 
-- [ ] 5. UI / State 実装
-- [ ] 5.1 QuickAddController (StateNotifier)
+- [x] 5. UI / State 実装
+- [x] 5.1 QuickAddController (StateNotifier)
   - タイトル必須バリデーション、本文/カラー/モード状態保持、NoteService+ReminderScheduler連携、プリセット適用を実装
   - _Requirements: 1.1,1.2,1.4,2.3,3.1,3.2,3.3,3.4,4.4,6.4,7.4_
-- [ ] 5.2 InputModeController
+- [x] 5.2 InputModeController
   - text/voiceの入力モード管理とcolor選択、音声開始/停止の権限チェックとフォールバックを実装
   - _Requirements: 1.3,2.1,2.2,2.3,2.4_
-- [ ] 5.3 CircularSchedulerUI
+- [x] 5.3 CircularSchedulerUI
   - 詳細/簡易モードの円形UIで時刻・時間帯選択、モード切替時の保持とトリガー変換を実装
   - _Requirements: 4.1,4.2,4.3_
-- [ ] 5.4 QuickAddUI
+- [x] 5.4 QuickAddUI
   - 最小入力画面、未保存警告、円形UI組込み、保存トリガーを実装
   - _Requirements: 1.1,1.4,4.1,4.2,7.4_
 
-- [ ] 6. テストと検証
-- [ ] 6.1 Unit: ReminderScheduler/Triggers
+- [x] 6. テストと検証
+- [x] 6.1 Unit: ReminderScheduler/Triggers
   - absolute/relative/bucket計算、繰越規則、exact許可有無分岐をテスト
   - _Requirements: 3.1,3.2,3.3,3.4_
-- [ ] 6.2 Unit: PresetService / NoteService
+- [x] 6.2 Unit: PresetService / NoteService
   - プリセット保存/更新/適用とバリデーション、タイトル必須とカラー保持をテスト
   - _Requirements: 1.2,2.3,5.1,5.2,5.3,5.4_
-- [ ] 6.3 Integration: QuickAddController + EntryDispatcher
+- [x] 6.3 Integration: QuickAddController + EntryDispatcher
   - 起動経路別初期化、保存〜スケジュール連携、Snooze/手動再設定フローを検証
   - _Requirements: 1.*,2.*,3.*,4.4,6.*,7.4_
-- [ ] 6.4 E2E/UI: ウィジェット/ショートカット → 通知
+- [x] 6.4 E2E/UI: ウィジェット/ショートカット → 通知
   - ウィジェット/ショートカット起動からメモ保存、通知表示/タップ復帰を通しで確認
   - _Requirements: 3.*,4.*,6.*,7.1,7.2_
