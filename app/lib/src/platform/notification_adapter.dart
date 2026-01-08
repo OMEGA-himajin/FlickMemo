@@ -16,13 +16,16 @@ class LocalNotificationAdapter {
   final String channelDescription;
 
   Future<void> initialize() async {
-    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const androidSettings = AndroidInitializationSettings(
+      '@mipmap/ic_launcher',
+    );
     const settings = InitializationSettings(android: androidSettings);
     await _plugin.initialize(settings);
 
     final androidPlugin = _plugin
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>();
+          AndroidFlutterLocalNotificationsPlugin
+        >();
     await androidPlugin?.createNotificationChannel(
       AndroidNotificationChannel(
         channelId,
@@ -57,9 +60,7 @@ class LocalNotificationAdapter {
       body,
       scheduled,
       details,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
-      androidAllowWhileIdle: true,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       payload: payload,
       matchDateTimeComponents: null,
     );
@@ -67,10 +68,8 @@ class LocalNotificationAdapter {
 }
 
 class WorkManagerAdapter {
-  WorkManagerAdapter(
-    this._workmanager, {
-    DateTime Function()? nowProvider,
-  }) : _now = nowProvider ?? DateTime.now;
+  WorkManagerAdapter(this._workmanager, {DateTime Function()? nowProvider})
+    : _now = nowProvider ?? DateTime.now;
 
   final Workmanager _workmanager;
   final DateTime Function() _now;
@@ -95,4 +94,3 @@ class WorkManagerAdapter {
     );
   }
 }
-

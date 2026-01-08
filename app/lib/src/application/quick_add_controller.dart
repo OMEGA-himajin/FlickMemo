@@ -3,7 +3,6 @@ import 'package:app/src/data/database.dart';
 import 'package:app/src/domain/note_service.dart';
 import 'package:app/src/domain/preset_service.dart' as preset;
 import 'package:app/src/domain/reminder_scheduler.dart' as reminder;
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class QuickAddState {
   const QuickAddState({
@@ -56,39 +55,40 @@ class SaveResult {
   final DateTime? scheduledAt;
 }
 
-class QuickAddController extends StateNotifier<QuickAddState> {
+class QuickAddController {
   QuickAddController(
     this._noteService,
     this._scheduler, {
     preset.PresetService? presetService,
-  }) : _presetService = presetService,
-       super(const QuickAddState());
+  }) : _presetService = presetService;
 
   final NoteService _noteService;
   final reminder.ReminderScheduler _scheduler;
   final preset.PresetService? _presetService;
 
-  QuickAddState get snapshot => state;
-  bool get hasUnsavedChanges => state.hasChanges;
+  QuickAddState _state = const QuickAddState();
+  QuickAddState get snapshot => _state;
+  QuickAddState get state => _state;
+  bool get hasUnsavedChanges => _state.hasChanges;
 
   void updateTitle(String title) {
-    state = state.copyWith(title: title, hasChanges: true);
+    _state = _state.copyWith(title: title, hasChanges: true);
   }
 
   void setBody(String? body) {
-    state = state.copyWith(body: body, hasChanges: true);
+    _state = _state.copyWith(body: body, hasChanges: true);
   }
 
   void setColor(String? color) {
-    state = state.copyWith(color: color, hasChanges: true);
+    _state = _state.copyWith(color: color, hasChanges: true);
   }
 
   void setInputMode(String inputMode) {
-    state = state.copyWith(inputMode: inputMode, hasChanges: true);
+    _state = _state.copyWith(inputMode: inputMode, hasChanges: true);
   }
 
   void setTrigger(reminder.ReminderTrigger? trigger) {
-    state = state.copyWith(
+    _state = _state.copyWith(
       trigger: trigger,
       hasChanges: true,
       overrideTrigger: true,
@@ -96,11 +96,11 @@ class QuickAddController extends StateNotifier<QuickAddState> {
   }
 
   Future<void> initializeFromEntry(QuickAddRequest request) async {
-    state = state.copyWith(
+    _state = _state.copyWith(
       entryType: request.entryType,
       openNoteId: request.openNoteId,
-      inputMode: request.inputMode ?? state.inputMode,
-      color: request.color ?? state.color,
+      inputMode: request.inputMode ?? _state.inputMode,
+      color: request.color ?? _state.color,
       hasChanges: true,
     );
 
@@ -121,32 +121,32 @@ class QuickAddController extends StateNotifier<QuickAddState> {
 
   void applyPreset(Preset preset) {
     final trigger = _mapPresetTrigger(preset);
-    state = state.copyWith(
-      inputMode: preset.inputMode ?? state.inputMode,
-      color: preset.color ?? state.color,
-      trigger: trigger ?? state.trigger,
+    _state = _state.copyWith(
+      inputMode: preset.inputMode ?? _state.inputMode,
+      color: preset.color ?? _state.color,
+      trigger: trigger ?? _state.trigger,
       hasChanges: true,
     );
   }
 
   Future<SaveResult> save() async {
-    final trimmedTitle = state.title.trim();
+    final trimmedTitle = _state.title.trim();
     if (trimmedTitle.isEmpty) {
       throw ArgumentError('title must not be empty');
     }
 
     final noteId = await _noteService.create(
-      NoteInput(title: trimmedTitle, body: state.body, color: state.color),
+      NoteInput(title: trimmedTitle, body: _state.body, color: _state.color),
     );
 
     DateTime? scheduledAt;
-    final reminderTrigger = state.trigger;
+    final reminderTrigger = _state.trigger;
     if (reminderTrigger != null) {
       final result = await _scheduler.schedule(noteId, reminderTrigger);
       scheduledAt = result.scheduledAt;
     }
 
-    state = state.copyWith(hasChanges: false);
+    _state = _state.copyWith(hasChanges: false);
     return SaveResult(noteId: noteId, scheduledAt: scheduledAt);
   }
 

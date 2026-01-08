@@ -1,5 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 class InputModeState {
   const InputModeState({
     this.title = '',
@@ -32,31 +30,34 @@ class InputModeState {
   }
 }
 
-class InputModeController extends StateNotifier<InputModeState> {
-  InputModeController() : super(const InputModeState());
+class InputModeController {
+  InputModeController();
+
+  InputModeState _state = const InputModeState();
+  InputModeState get state => _state;
 
   void updateTitle(String title) {
-    state = state.copyWith(title: title);
+    _state = _state.copyWith(title: title);
   }
 
   void updateBody(String? body) {
-    state = state.copyWith(body: body);
+    _state = _state.copyWith(body: body);
   }
 
   void setColor(String? color) {
-    state = state.copyWith(color: color);
+    _state = _state.copyWith(color: color);
   }
 
   void switchMode(String inputMode) {
-    state = state.copyWith(inputMode: inputMode, isListening: false);
+    _state = _state.copyWith(inputMode: inputMode, isListening: false);
   }
 
   bool startVoice({required bool permissionGranted}) {
     if (!permissionGranted) {
-      state = state.copyWith(isListening: false);
+      _state = _state.copyWith(isListening: false);
       return false;
     }
-    state = state.copyWith(inputMode: 'voice', isListening: true);
+    _state = _state.copyWith(inputMode: 'voice', isListening: true);
     return true;
   }
 }

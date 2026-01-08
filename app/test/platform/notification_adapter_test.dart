@@ -33,6 +33,7 @@ void main() {
       tz.TZDateTime.from(DateTime.utc(2000, 1, 1), tz.getLocation('UTC')),
     );
     registerFallbackValue(ExistingWorkPolicy.keep);
+    registerFallbackValue(AndroidScheduleMode.exactAllowWhileIdle);
   });
 
   group('LocalNotificationAdapter', () {
@@ -50,11 +51,15 @@ void main() {
         channelDescription: 'desc',
       );
       when(() => plugin.initialize(any())).thenAnswer((_) async => true);
-      when(() => plugin.resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>())
-          .thenReturn(androidPlugin);
-      when(() => androidPlugin.createNotificationChannel(any()))
-          .thenAnswer((_) async {});
+      when(
+        () => plugin
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >(),
+      ).thenReturn(androidPlugin);
+      when(
+        () => androidPlugin.createNotificationChannel(any()),
+      ).thenAnswer((_) async {});
       when(
         () => plugin.zonedSchedule(
           any(),
@@ -62,9 +67,7 @@ void main() {
           any(),
           any(),
           any(),
-          uiLocalNotificationDateInterpretation:
-              UILocalNotificationDateInterpretation.absoluteTime,
-          androidAllowWhileIdle: true,
+          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
           payload: any(named: 'payload'),
           matchDateTimeComponents: null,
         ),
@@ -92,9 +95,7 @@ void main() {
           'b',
           captureAny(),
           any(),
-          uiLocalNotificationDateInterpretation:
-              UILocalNotificationDateInterpretation.absoluteTime,
-          androidAllowWhileIdle: true,
+          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
           payload: 'p',
           matchDateTimeComponents: null,
         ),
@@ -134,10 +135,7 @@ void main() {
         () => workmanager.registerOneOffTask(
           'reschedule-42',
           'reminder_reschedule',
-          inputData: {
-            'noteId': '42',
-            'scheduledAt': at.millisecondsSinceEpoch,
-          },
+          inputData: {'noteId': '42', 'scheduledAt': at.millisecondsSinceEpoch},
           initialDelay: const Duration(minutes: 30),
           existingWorkPolicy: ExistingWorkPolicy.replace,
         ),
@@ -153,10 +151,7 @@ void main() {
         () => workmanager.registerOneOffTask(
           'reschedule-7',
           'reminder_reschedule',
-          inputData: {
-            'noteId': '7',
-            'scheduledAt': at.millisecondsSinceEpoch,
-          },
+          inputData: {'noteId': '7', 'scheduledAt': at.millisecondsSinceEpoch},
           initialDelay: Duration.zero,
           existingWorkPolicy: ExistingWorkPolicy.replace,
         ),
@@ -164,4 +159,3 @@ void main() {
     });
   });
 }
-
